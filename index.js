@@ -192,11 +192,11 @@ client.on('message', async  message => {
 								}								
 
 							})								
-							
+							//console.log(rowsChats)
 							var data = {
-								id : rowsChats[i].section_id+padLeadingZeros(month, 3)+padLeadingZeros((jml+1), 4),
+								id : rowsChats[i].section_id+(dateformat('yy'))+padLeadingZeros(month, 3)+padLeadingZeros((jml+1), 4),
 								from_wa_no : message.from.replace('@c.us',''),
-								main_menu_id : rowsChats[1].chat,
+								main_menu_id : rowsChats[0].chat,
 								status_id : 1,
 								chat : msg,
 								created_at: dateformat('yyyy-mm-dd H:MM:ss')
