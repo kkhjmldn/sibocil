@@ -5,11 +5,30 @@ const qrcode = require('qrcode-terminal')
 
 const dateformat = require('dateformat')
 
-const {Client, MessageMedia} = require('whatsapp-web.js')
+const {Client, MessageMedia, LocalAuth} = require('whatsapp-web.js')
 
 const SESSION_FILE_PATH = './session.json';
 
-const client = new Client();
+const client = new Client({
+	restartOnAuthFail: true,
+	authStrategy : new LocalAuth() /*new LegacySessionAuth({
+	  session: sessionCfg
+	}) */,
+	puppeteer: {
+	  headless: true,
+	  args: [
+		'--no-sandbox',
+		'--disable-setuid-sandbox',
+		'--disable-dev-shm-usage',
+		'--disable-accelerated-2d-canvas',
+		'--no-first-run',
+		'--no-zygote',
+		'--single-process', // <- this one doesn't works in Windows
+		'--disable-gpu'
+	  ],
+	},
+	//session: sessionCfg
+  });
 
 var mysql = require('mysql')
 
@@ -27,6 +46,10 @@ con.connect(function(err) {
 
 client.on('qr', (qr) => {
 	qrcode.generate(qr, {small : true})
+})
+
+client.on('authenticated', (session) => {
+	console.log('client is authenticated')
 })
 
 client.on('ready', () => {
@@ -58,7 +81,7 @@ const global = (0,eval)("this");
 global.media = []
 
 client.on('message', async  message => {
-
+	console.log('ada pesan')
 	if (message.body.toLowerCase().includes('cetak#')) {
 		var bulan = 0
 		var mess = message.body.split('#')
